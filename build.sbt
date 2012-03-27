@@ -15,5 +15,4 @@ libraryDependencies += "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "1.1.0.2011
 
 publishTo := Some(Resolver.url("sbt-plugin-releases", new URL("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns))
 
-libraryDependencies <+= sbtVersion("org.scala-sbt" % "scripted-plugin" % _)
 

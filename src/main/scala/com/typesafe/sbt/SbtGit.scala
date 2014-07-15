@@ -148,12 +148,12 @@ object SbtGit extends Plugin {
       }
       // Version string that just uses the commit version.
       def commitVersion: Option[String] =
-         headCommit map (sha => baseVersion + "-" + sha)
+         headCommit map (sha => baseVersion + "-" + sha + "-SNAPSHOT")
       // Version string that just uses the full timestamp.
       def datedVersion: String = {
         val df = new java.text.SimpleDateFormat("yyyyMMdd'T'HHmmss")
         df setTimeZone java.util.TimeZone.getTimeZone("GMT")
-        baseVersion + "-" + (df format (new java.util.Date))
+        baseVersion + "-" + (df format new java.util.Date) + "-SNAPSHOT"
       }
       //Now we fall through the potential version numbers...
       overrideVersion  orElse releaseVersion orElse commitVersion getOrElse datedVersion

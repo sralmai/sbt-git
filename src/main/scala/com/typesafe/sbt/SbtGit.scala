@@ -2,8 +2,7 @@ package com.typesafe.sbt
 
 import sbt._
 import Keys._
-import git.{ ConsoleGitRunner, GitRunner, JGitRunner, NullLogger }
-import scala.util.logging.ConsoleLogger
+import git.{ ConsoleGitRunner, JGitRunner }
 import com.typesafe.sbt.git.GitRunner
 import com.typesafe.sbt.git.ReadableGit
 import com.typesafe.sbt.git.DefaultReadableGit
@@ -34,7 +33,6 @@ object SbtGit extends Plugin {
   object GitCommand {
     val action: (State, Seq[String]) => State = { (state, args) =>
       val extracted = Project.extract(state)
-      import extracted._
       val (state2, runner) = extracted.runTask(GitKeys.gitRunner, state)
       val dir = extracted.get(baseDirectory)
       val result = runner(args:_*)(dir, state2.log)
@@ -58,7 +56,6 @@ object SbtGit extends Plugin {
 
     val prompt: State => String = { state =>
       val extracted = Project.extract(state)
-      import extracted._
       val reader = extracted get GitKeys.gitReader
       val dir = extracted get baseDirectory
       val name = extracted get Keys.name
@@ -112,7 +109,7 @@ object SbtGit extends Plugin {
    */
   def versionWithGit: Seq[Setting[_]] =
     Seq(
-        gitTagToVersionNumber in ThisBuild := (git.defaultTagByVersionStrategy _),
+        gitTagToVersionNumber in ThisBuild := git.defaultTagByVersionStrategy,
         baseVersion in ThisBuild := "1.0",
         versionProperty in ThisBuild := "project.version",
         version in ThisBuild <<= (git.versionProperty, git.baseVersion, git.gitHeadCommit, git.gitCurrentTags, git.gitTagToVersionNumber) apply git.makeVersion
@@ -141,7 +138,7 @@ object SbtGit extends Plugin {
       // The version string passed in via command line settings, if desired.
       def overrideVersion = Option(sys.props(versionProperty))
       // Version string that is computed from tags.
-      def releaseVersion: Option[String] = {
+      def releaseVersion(): Option[String] = {
         val releaseVersions =
           for {
             tag <- currentTags

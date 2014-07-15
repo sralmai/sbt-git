@@ -49,7 +49,6 @@ final class JGit(val repo: Repository) extends GitReadonlyInterface {
     headCommit map (_.name)
 
   def currentTags: Seq[String] = {
-    import collection.JavaConverters._
     for {
       hash <- headCommit.map(_.name).toSeq
       unpeeledTag <- tags
